@@ -1,14 +1,14 @@
 ### 1. 필요한 모듈 / 함수 임포트
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from typing import TypedDict, Annotated, List
 from langgraph.graph import StateGraph, END
-from langchain_core.messages import BaseMessage, HumanMessage
+from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
 import operator
 
 
 ### 2. 환경 설정: API 키 불러오기
-load_dotenv()
+# load_dotenv()
 
 
 ### 3. 그래프 상태 정의
@@ -20,7 +20,7 @@ class AgentState(TypedDict):
 
 
 ### 4. LLM 설정
-llm = ChatOpenAI(model='gpt-4o-mini', temperature=0.7)
+# llm = ChatOpenAI(model='gpt-4o-mini', temperature=0.7)
 
 
 ### 5. Node(Agent) 함수 정의
@@ -47,7 +47,8 @@ def analysis_agent(state: AgentState):
         
     print(f"문의 유형 : {inquiry_type}")
     # inquiry_type과 함꼐 resolution_status도 반환하도록 수정 
-    return {"inquiry_type": inquiry_type, "resolution_status": resolution_status, "messages":[HumanMessage(content=f"초기 문의 분석: 초기 문의는 {inquiry_type}유형 입니다.")]}
+    # return {"inquiry_type": inquiry_type, "resolution_status": resolution_status, "messages":[HumanMessage(content=f"초기 문의 분석: 초기 문의는 {inquiry_type}유형 입니다.")]}
+    return {"messages":[AIMessage(content=f"초기 문의 분석: 초기 문의는 {inquiry_type}유형 입니다.")], "inquiry_type": inquiry_type, "resolution_status": resolution_status}
 
 def product_agent(state: AgentState):
     """
@@ -55,8 +56,9 @@ def product_agent(state: AgentState):
     """
     print("--- 제품 에이전트 실행 ---")
     # 실제로는 제품 DB 조회, FAQ 답변 생성 등의 로직 포함
-    resolved = "resolved" if "가격" in state["messages"][-1].content else "pending"
-    return {"resolution_status":resolved, "messages":[HumanMessage(content=f"제품 관련 문의 처리 완료. Status: {resolved}")]}
+    resolved = "resolved" if "가격" in state["messages"][0].content else "pending"
+    # return {"resolution_status":resolved, "messages":[HumanMessage(content=f"제품 관련 문의 처리 완료. Status: {resolved}")]}
+    return {"messages":[AIMessage(content=f"제품 관련 문의 처리 완료. Status: {resolved}")], "resolution_status":resolved}
 
 def payment_agent(state: AgentState):
     """
@@ -64,8 +66,9 @@ def payment_agent(state: AgentState):
     """
     print("--- 결제 에이전트 실행 ---")
     # 실제로는 결제 시스템 연동, 환불 처리 로직 포함
-    resolved = "resolved" if "환불" in state["messages"][-1].content else "pending"
-    return {"resolution_status": resolved, "messages":[HumanMessage(content=f"결제 관련 문의 처리 완료. Status: {resolved}")]}
+    resolved = "resolved" if "환불" in state["messages"][0].content else "pending"
+    # return {"resolution_status": resolved, "messages":[HumanMessage(content=f"결제 관련 문의 처리 완료. Status: {resolved}")]}
+    return {"messages":[AIMessage(content=f"결제 관련 문의 처리 완료. Status: {resolved}")], "resolution_status": resolved}
 
 
 def tech_support_agent(state: AgentState):
@@ -74,8 +77,9 @@ def tech_support_agent(state: AgentState):
     """
     print("--- 기술 지원 에이전트 실행 ---")
     # 실제로는 기술 문서 검색, 문제 해결 가이드 제공 로직 포함
-    resolved = "resolved" if "재설치" in state["messages"][-1].content else "failed"
-    return {"resolution_status": resolved, "messages":[HumanMessage(content=f"기술 관련 문의 처리 완료, Status: {resolved}")]}
+    resolved = "resolved" if "재설치 완료" in state["messages"][0].content else "failed"
+    # return {"resolution_status": resolved, "messages":[HumanMessage(content=f"기술 관련 문의 처리 완료, Status: {resolved}")]}
+    return {"messages":[AIMessage(content=f"기술 관련 문의 처리 완료, Status: {resolved}")], "resolution_status": resolved}
 
 def final_response_agent(state: AgentState):
     """
@@ -95,7 +99,8 @@ def final_response_agent(state: AgentState):
         feedback_needed=True  # 처리 실패 시 피드백 필요
 
     print(f"최종 응답: {response_content}")
-    return {"messages":[HumanMessage(content=response_content)], "feedback_needed":feedback_needed}
+    # return {"messages":[HumanMessage(content=response_content)], "feedback_needed":feedback_needed}
+    return {"messages":[AIMessage(content=response_content)], "feedback_needed":feedback_needed}
 
 def feedback_collection_node(state: AgentState):
     """
@@ -110,7 +115,8 @@ def feedback_collection_node(state: AgentState):
     final_status = state["resolution_status"]
     print(f"피드백 데이터 수집: 원본 문의 '{user_query}', 최종 상태 '{final_status}'")
     # 실제 시스템에서는 이 정보를 바탕으로 LLM 프롬프트, tool 사용 로직 등을 개선할 수 있습니다.
-    return {"messages": [HumanMessage(content="Feedback collected for system improvement.")]}
+    # return {"messages": [HumanMessage(content="Feedback collected for system improvement.")]}
+    return {"messages": [AIMessage(content="Feedback collected for system improvement.")]}
 
 
 ### 6. 조건부 라우팅 함수 정의
