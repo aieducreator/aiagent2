@@ -94,9 +94,6 @@ workflow.set_entry_point("rag_node")
 # 6-4 엣지 추가
 workflow.add_edge("rag_node", END)
 
-# 6-5 그래프 컴파일: 그래프를 실행 가능한 구조로 변환
-app = workflow.compile()
-
 
 ### 7. 그래프 실행
 
@@ -142,7 +139,7 @@ async def main():
             
             # 최종 결과 생성, config를 포함하여 ainvoke 호출
             # Checkpointer가 config의 thread_id를 보고 DB에서 이전 대화 내용을 자동으로 불러온다
-            # 최종 결과 -> dict 자료형: {'messages': [HumanMessage, AIMessage,...]}
+            # 최종 결과 -> dict 자료 구조: {'messages': [HumanMessage, AIMessage,...]}
             final_result = await app.ainvoke(initial_state, config)
 
             # 최종 결과 값 추출
