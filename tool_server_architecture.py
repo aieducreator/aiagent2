@@ -16,7 +16,7 @@ class GreetingInput(BaseModel):
 
 ### 4. 도구 함수 정의
 
-# FastMCP 의 데코레이터 -> 파이썬 함수를 '도구'로 변환하고 서버에 등록
+# FastMCP 클래스의 데코레이터 -> 파이썬 함수를 '도구'로 변환하고 서버에 등록
 @mcp_server.tool(
     name = "create_greeting_message",
     description = "주어진 이름과 언어로 인사 메시지를 생성합니다."
