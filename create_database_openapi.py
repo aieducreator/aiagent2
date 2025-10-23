@@ -27,9 +27,10 @@ def fetch_sales_data(api_key, start_index, end_index, period):
         # 데이터 수집
         if 'VwsmTrdarSelngQq' in data and 'row' in data['VwsmTrdarSelngQq']:
             return data['VwsmTrdarSelngQq']['row']
-        elif 'RESULT' in data and data['RESULT']['CODE'] == 'INFO-200': return []
+        elif 'RESULT' in data['VwsmTrdarSelngQq'] and data['VwsmTrdarSelngQq']['RESULT']['CODE'] == 'INFO-200': 
+            return []
         else:
-            error_message = data.get('RESULT', {}).get('MESSAGE', '알 수 없는 오류')
+            error_message = data['VwsmTrdarSelngQq'].get('RESULT', {}).get('MESSAGE', '알 수 없는 오류')
             print(f"API 에러: {error_message}")
             if '인증키' in error_message: return "AUTH_ERROR"
             return None
